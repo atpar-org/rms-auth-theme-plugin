@@ -7,8 +7,8 @@
 # Quick start
 
 ```bash
-git clone https://github.com/keycloakify/keycloakify-starter
-cd keycloakify-starter
+git clone https://github.com/<YOUR_GITHUB_USERNAME_OR_ORG>/rms-auth-theme-plugin
+cd rms-auth-theme-plugin
 yarn install # Or use an other package manager, just be sure to delete the yarn.lock if you use another package manager.
 ```
 
@@ -51,7 +51,7 @@ npx keycloakify initialize-email-theme
 # GitHub Actions
 
 The starter comes with a generic GitHub Actions workflow that builds the theme and publishes
-the jars [as GitHub releases artifacts](https://github.com/keycloakify/keycloakify-starter/releases/tag/v10.0.0).  
+the jars as GitHub releases artifacts.  
 To release a new version **just update the `package.json` version and push**.
 
 To enable the workflow go to your fork of this repository on GitHub then navigate to:

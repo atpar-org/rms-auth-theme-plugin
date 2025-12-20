@@ -11,7 +11,12 @@ const kcContextExtension: KcContextExtension = {
         ...kcEnvDefaults
     }
 };
-const kcContextExtensionPerPage: KcContextExtensionPerPage = {};
+const kcContextExtensionPerPage: KcContextExtensionPerPage = {
+    "register.ftl": {},
+    "login-sms-otp.ftl": {},
+    "login-sms-otp-config.ftl": {},
+    "login-update-phone-number.ftl": {}
+};
 
 export const { getKcContextMock } = createGetKcContextMock({
     kcContextExtension,
