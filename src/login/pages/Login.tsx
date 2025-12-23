@@ -17,6 +17,9 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { CountrySelect } from "../components/CountrySelect";
+import { DEFAULT_COUNTRY, parseE164PhoneNumber, type Country } from "../components/countries";
+import { requestSmsCode, startCountdown } from "../lib/sms";
 export default function Login(props: PageProps<Extract<KcContext, { pageId: "login.ftl" }>, I18n>) {
     const { kcContext, i18n, doUseDefaultCss, Template, classes } = props;
 
@@ -61,28 +64,22 @@ export default function Login(props: PageProps<Extract<KcContext, { pageId: "log
     const supportPhone = kcContext.supportPhone === true;
     const defaultPhoneActivated = supportPhone && !usernameHidden ? kcContext.attemptedPhoneActivated ?? true : false;
     const [phoneActivated, setPhoneActivated] = useState<boolean>(defaultPhoneActivated);
-    const [phoneNumber, setPhoneNumber] = useState<string>(kcContext.attemptedPhoneNumber ?? "");
+    const parsedAttempted = parseE164PhoneNumber(kcContext.attemptedPhoneNumber ?? "");
+    const [country, setCountry] = useState<Country>(parsedAttempted?.country ?? DEFAULT_COUNTRY);
+    const [localPhoneNumber, setLocalPhoneNumber] = useState<string>(
+        parsedAttempted?.nationalNumber ?? kcContext.attemptedPhoneNumber ?? ""
+    );
     const sendVerificationCodeLabel = safeMsgStr("sendVerificationCode", "Send code");
     const requiredPhoneNumberLabel = safeMsgStr("requiredPhoneNumber", "Phone number is required");
     const [sendButtonText, setSendButtonText] = useState<string>(sendVerificationCodeLabel);
     const [errorMessage, setErrorMessage] = useState<string>("");
 
-    function startTimer(seconds: number) {
-        if (seconds <= 0) {
-            setSendButtonText(sendVerificationCodeLabel);
-            return;
-        }
-        const minutes = String(Math.floor(seconds / 60)).padStart(2, "0");
-        const secondsStr = String(seconds % 60).padStart(2, "0");
-        setSendButtonText(`${minutes}:${secondsStr}`);
-        window.setTimeout(() => startTimer(seconds - 1), 1000);
-    }
+    const e164PhoneNumber = toE164(country, localPhoneNumber);
 
     async function sendVerificationCode() {
         setErrorMessage("");
 
-        const trimmed = phoneNumber.trim();
-        if (!trimmed) {
+        if (!e164PhoneNumber) {
             setErrorMessage(requiredPhoneNumberLabel);
             return;
         }
@@ -93,27 +90,19 @@ export default function Login(props: PageProps<Extract<KcContext, { pageId: "log
         }
 
         try {
-            const res = await fetch(
-                `${window.location.origin}/realms/${encodeURIComponent(realm.name)}/sms/authentication-code?phoneNumber=${encodeURIComponent(
-                    trimmed
-                )}`
-            );
+            const { expiresIn } = await requestSmsCode({
+                realmName: realm.name,
+                endpoint: "authentication-code",
+                phoneNumber: e164PhoneNumber
+            });
 
-            if (!res.ok) {
-                // Try to read Keycloak style error response.
-                const maybeJson = await res.json().catch(() => undefined);
-                const message =
-                    typeof maybeJson?.error === "string"
-                        ? maybeJson.error
-                        : msgStr("errorTitle"); // fallback (built-in key)
-                setErrorMessage(message);
-                return;
-            }
-
-            const data = (await res.json()) as { expires_in?: number };
-            startTimer(Number(data.expires_in ?? 0));
-        } catch {
-            setErrorMessage(msgStr("errorTitle"));
+            startCountdown({
+                seconds: expiresIn,
+                onTick: setSendButtonText,
+                onDone: () => setSendButtonText(sendVerificationCodeLabel)
+            });
+        } catch (e) {
+            setErrorMessage(e instanceof Error ? e.message : msgStr("errorTitle"));
         }
     }
 
@@ -336,20 +325,26 @@ export default function Login(props: PageProps<Extract<KcContext, { pageId: "log
                             {supportPhone && !usernameHidden && phoneActivated && (
                                 <div className="space-y-4">
                                     <div className={clsx(kcClsx("kcFormGroupClass"), "space-y-2")}>
-                                        <Label htmlFor="phoneNumber" className={kcClsx("kcLabelClass")}>
+                                        <Label htmlFor="phoneNumberLocal" className={kcClsx("kcLabelClass")}>
                                             {safeMsg("phoneNumber", "Phone number")}
                                         </Label>
-                                        <Input
-                                            tabIndex={2}
-                                            type="text"
-                                            id="phoneNumber"
-                                            name="phoneNumber"
-                                            value={phoneNumber}
-                                            onChange={e => setPhoneNumber(e.target.value)}
-                                            autoFocus
-                                            autoComplete="off"
-                                            aria-invalid={messagesPerField.existsError("code", "phoneNumber")}
-                                        />
+                                        {/* Submit the combined E.164 number (country code + local number). */}
+                                        <input type="hidden" id="phoneNumber" name="phoneNumber" value={e164PhoneNumber} />
+                                        <div className="flex gap-2">
+                                            <CountrySelect className="w-[140px]" value={country} onChange={setCountry} />
+                                            <Input
+                                                tabIndex={2}
+                                                type="tel"
+                                                id="phoneNumberLocal"
+                                                value={localPhoneNumber}
+                                                onChange={e => setLocalPhoneNumber(e.target.value)}
+                                                autoFocus
+                                                autoComplete="tel"
+                                                inputMode="tel"
+                                                placeholder="Mobile number"
+                                                aria-invalid={messagesPerField.existsError("code", "phoneNumber")}
+                                            />
+                                        </div>
                                         {messagesPerField.existsError("code", "phoneNumber") && (
                                             <span
                                                 id="input-error"
@@ -477,4 +472,10 @@ function PasswordWrapper(props: { kcClsx: KcClsx; i18n: I18n; passwordInputId: s
             </button>
         </div>
     );
+}
+
+function toE164(country: Country, local: string): string {
+    const localDigits = (local ?? "").replace(/[^\d]/g, "");
+    if (!localDigits) return "";
+    return `+${country.dialCode}${localDigits}`;
 }
