@@ -20,6 +20,7 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CountrySelect } from "../components/CountrySelect";
 import { DEFAULT_COUNTRY, parseE164PhoneNumber, type Country } from "../components/countries";
 import { requestSmsCode, startCountdown } from "../lib/sms";
+import { formatKcMessage } from "../lib/formatKcMessage";
 export default function Login(props: PageProps<Extract<KcContext, { pageId: "login.ftl" }>, I18n>) {
     const { kcContext, i18n, doUseDefaultCss, Template, classes } = props;
 
@@ -102,7 +103,8 @@ export default function Login(props: PageProps<Extract<KcContext, { pageId: "log
                 onDone: () => setSendButtonText(sendVerificationCodeLabel)
             });
         } catch (e) {
-            setErrorMessage(e instanceof Error ? e.message : msgStr("errorTitle"));
+            const raw = e instanceof Error ? e.message : msgStr("errorTitle");
+            setErrorMessage(formatKcMessage(i18n, raw));
         }
     }
 
@@ -203,7 +205,7 @@ export default function Login(props: PageProps<Extract<KcContext, { pageId: "log
 
                             {errorMessage !== "" && (
                                 <div className="rounded-md border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
-                                    {errorMessage}
+                                    {formatKcMessage(i18n, errorMessage)}
                                 </div>
                             )}
 
@@ -355,7 +357,10 @@ export default function Login(props: PageProps<Extract<KcContext, { pageId: "log
                                                 aria-live="polite"
                                                 dangerouslySetInnerHTML={{
                                                     __html: kcSanitize(
-                                                        messagesPerField.getFirstError("phoneNumber", "code")
+                                                        formatKcMessage(
+                                                            i18n,
+                                                            messagesPerField.getFirstError("phoneNumber", "code")
+                                                        )
                                                     )
                                                 }}
                                             />

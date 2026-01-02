@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { requestSmsCode, startCountdown } from "../lib/sms";
+import { formatKcMessage } from "../lib/formatKcMessage";
 
 type RegisterProps = PageProps<Extract<KcContext, { pageId: "register.ftl" }>, I18n> & {
     UserProfileFormFields: LazyOrNot<(props: UserProfileFormFieldsProps) => JSX.Element>;
@@ -64,7 +65,8 @@ export default function Register(props: RegisterProps) {
                 onDone: () => setSendButtonText(sendVerificationCodeLabel)
             });
         } catch (e) {
-            setErrorMessage(e instanceof Error ? e.message : msgStr("errorTitle"));
+            const raw = e instanceof Error ? e.message : msgStr("errorTitle");
+            setErrorMessage(formatKcMessage(i18n, raw));
         }
     }
 
@@ -140,7 +142,9 @@ export default function Register(props: RegisterProps) {
                                 className="text-sm text-destructive"
                                 aria-live="polite"
                                 dangerouslySetInnerHTML={{
-                                    __html: kcSanitize(messagesPerField.getFirstError("registerCode", "code"))
+                                    __html: kcSanitize(
+                                        formatKcMessage(i18n, messagesPerField.getFirstError("registerCode", "code"))
+                                    )
                                 }}
                             />
                         )}

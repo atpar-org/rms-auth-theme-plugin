@@ -9,6 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { requestSmsCode, startCountdown } from "../lib/sms";
+import { formatKcMessage } from "../lib/formatKcMessage";
 
 export default function LoginResetPassword(
     props: PageProps<Extract<KcContext, { pageId: "login-reset-password.ftl" }>, I18n>
@@ -55,7 +56,8 @@ export default function LoginResetPassword(
                 onDone: () => setSendButtonText(sendVerificationCodeLabel)
             });
         } catch (e) {
-            setErrorMessage(e instanceof Error ? e.message : msgStr("errorTitle"));
+            const raw = e instanceof Error ? e.message : msgStr("errorTitle");
+            setErrorMessage(formatKcMessage(i18n, raw));
         }
     }
 
@@ -94,7 +96,7 @@ export default function LoginResetPassword(
 
                 {errorMessage !== "" && (
                     <div className="rounded-md border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
-                        {errorMessage}
+                        {formatKcMessage(i18n, errorMessage)}
                     </div>
                 )}
 
@@ -140,7 +142,12 @@ export default function LoginResetPassword(
                                     className="text-sm text-destructive"
                                     aria-live="polite"
                                     dangerouslySetInnerHTML={{
-                                        __html: kcSanitize(messagesPerField.getFirstError("phoneNumber", "code"))
+                                        __html: kcSanitize(
+                                            formatKcMessage(
+                                                i18n,
+                                                messagesPerField.getFirstError("phoneNumber", "code")
+                                            )
+                                        )
                                     }}
                                 />
                             )}

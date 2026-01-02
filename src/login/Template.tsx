@@ -11,6 +11,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { ChevronDown } from "lucide-react";
+import { formatKcMessage } from "./lib/formatKcMessage";
 export default function Template(props: TemplateProps<KcContext, I18n>) {
     const {
         displayInfo = false,
@@ -165,7 +166,7 @@ export default function Template(props: TemplateProps<KcContext, I18n>) {
                             <span
                                 className={kcClsx("kcAlertTitleClass")}
                                 dangerouslySetInnerHTML={{
-                                    __html: kcSanitize(message.summary)
+                                    __html: kcSanitize(formatKcMessage(i18n, message.summary))
                                 }}
                             />
                         </div>

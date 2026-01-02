@@ -4603,10 +4603,10 @@ jsonfile@^6.0.1:
     object.assign "^4.1.4"
     object.values "^1.1.6"
 
-keycloakify@^11.13.2:
-  version "11.13.2"
-  resolved "https://registry.npmjs.org/keycloakify/-/keycloakify-11.13.2.tgz"
-  integrity sha512-NzDeg1zX1nYf2UxFOe1hnIqU8WXAmOA/U56B6D6IWAirVAZaH33vcqnHdpn2mrb4A9oJxnpEYsZ7G3dTWNVp3g==
+keycloakify@^11.13.6:
+  version "11.13.6"
+  resolved "https://registry.npmjs.org/keycloakify/-/keycloakify-11.13.6.tgz"
+  integrity sha512-ZEk8ZoB2DEa50GX7DC8xBtDnLlNcGR4du2tfTibBDzPAdtMzsntHD0U67qDiJQVgqRpvSVELGZoZQVca76U0jA==
   dependencies:
     tsafe "^1.8.5"
 
