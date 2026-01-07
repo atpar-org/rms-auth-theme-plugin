@@ -12,6 +12,7 @@ import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
 import { ChevronDown } from "lucide-react";
 import { formatKcMessage } from "./lib/formatKcMessage";
+import atparLogo from "./assets/atpar_logo.jpg";
 export default function Template(props: TemplateProps<KcContext, I18n>) {
     const {
         displayInfo = false,
@@ -59,7 +60,7 @@ export default function Template(props: TemplateProps<KcContext, I18n>) {
         <div className="min-h-screen bg-background flex items-center justify-center px-4">
             <div className="w-full max-w-md space-y-8">
                 <div className="flex items-center justify-center">
-                    <img src="/images/atpar_logo.jpg" alt="aPAR Logo" className="max-w-md w-full h-auto" />
+                    <img src={atparLogo} alt="aPAR Logo" className="max-w-md w-full h-auto" />
                 </div>
                 <Card className="w-full shadow-lg border">
                     <CardHeader className="space-y-4">
