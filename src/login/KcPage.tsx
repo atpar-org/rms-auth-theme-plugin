@@ -38,8 +38,6 @@ export default function KcPage(props: { kcContext: KcContext }) {
                             {...{ kcContext, i18n, classes }}
                             Template={Template}
                             doUseDefaultCss={false}
-                            UserProfileFormFields={UserProfileFormFields}
-                            doMakeUserConfirmPassword={doMakeUserConfirmPassword}
                         />
                     );
                     case "login-reset-password.ftl": return (

@@ -67,4 +67,185 @@
   }
 }
 
+/* Keycloak Form Field Styles - Match shadcn/ui design */
+@layer components {
+  /* Form group spacing */
+  .kcFormGroupClass {
+    @apply space-y-2 mb-4;
+  }
+
+  /* Input wrapper - ensures proper layout */
+  .kcInputWrapperClass {
+    @apply w-full;
+  }
+
+  /* Label styling */
+  .kcLabelClass,
+  .kcLabelWrapperClass,
+  .pf-c-form__label,
+  .pf-c-form__label-text {
+    @apply text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70;
+    @apply flex items-center gap-1;
+  }
+
+  /* Input styling - match shadcn Input component */
+  .kcInputClass,
+  input.pf-c-form-control,
+  .pf-c-form-control,
+  input[class*="kcInput"] {
+    @apply flex h-9 w-full rounded-md border border-input bg-background px-3 py-1 text-sm shadow-sm;
+    @apply transition-colors file:border-0 file:bg-transparent file:text-sm file:font-medium;
+    @apply placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring;
+    @apply disabled:cursor-not-allowed disabled:opacity-50;
+  }
+
+  /* Input wrapper for password visibility toggle */
+  .kcInputGroup {
+    @apply relative flex items-center w-full;
+  }
+
+  .kcInputGroup input {
+    @apply pr-10;
+  }
+
+  /* Password visibility button styling */
+  .kcFormPasswordVisibilityButtonClass,
+  .kcInputGroup button {
+    @apply absolute right-0 top-0 h-full px-3 py-1 text-muted-foreground hover:text-foreground;
+    @apply flex items-center justify-center bg-transparent border-none cursor-pointer;
+  }
+
+  /* Password visibility icons */
+  .kcFormPasswordVisibilityIconShow::before,
+  .kcFormPasswordVisibilityIconHide::before {
+    content: "";
+    display: inline-block;
+    width: 1rem;
+    height: 1rem;
+    background-size: contain;
+    background-repeat: no-repeat;
+  }
+  
+  .kcFormPasswordVisibilityIconShow::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z'/%3E%3Ccircle cx='12' cy='12' r='3'/%3E%3C/svg%3E");
+  }
+  
+  .kcFormPasswordVisibilityIconHide::before {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M9.88 9.88a3 3 0 1 0 4.24 4.24'/%3E%3Cpath d='M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68'/%3E%3Cpath d='M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61'/%3E%3Cline x1='2' x2='22' y1='2' y2='22'/%3E%3C/svg%3E");
+  }
+
+  /* Error message styling */
+  .kcInputErrorMessageClass,
+  .pf-c-form__helper-text.pf-m-error {
+    @apply text-sm text-destructive;
+  }
+
+  /* Invalid input styling */
+  input[aria-invalid="true"],
+  .pf-c-form-control[aria-invalid="true"] {
+    @apply border-destructive focus-visible:ring-destructive;
+  }
+
+  /* Required field indicator */
+  .pf-c-form__label-required,
+  .required {
+    @apply text-destructive ml-0.5;
+  }
+
+  /* Form options wrapper */
+  .kcFormOptionsWrapperClass {
+    @apply flex items-center;
+  }
+
+  /* Form settings row (remember me + forgot password) */
+  .kcFormSettingClass {
+    @apply flex items-center justify-between gap-4;
+  }
+
+  /* Social login section */
+  .kcFormSocialAccountSectionClass {
+    @apply mt-6;
+  }
+
+  .kcFormSocialAccountSectionClass hr {
+    @apply my-4 border-border;
+  }
+
+  .kcFormSocialAccountSectionClass h2 {
+    @apply text-sm font-medium text-muted-foreground text-center mb-4;
+  }
+
+  .kcFormSocialAccountListClass {
+    @apply flex flex-col gap-2 list-none p-0 m-0;
+  }
+
+  .kcFormSocialAccountListGridClass {
+    @apply grid grid-cols-2 gap-2;
+  }
+
+  .kcFormSocialAccountListButtonClass {
+    @apply flex items-center justify-center gap-2 w-full px-4 py-2 text-sm font-medium;
+    @apply border border-input rounded-md bg-background hover:bg-accent hover:text-accent-foreground;
+    @apply transition-colors no-underline;
+  }
+
+  /* Alert/message styling */
+  .kcAlertClass {
+    @apply rounded-md border px-4 py-3 text-sm;
+  }
+
+  .alert-success {
+    @apply border-green-500/30 bg-green-500/10 text-green-700;
+  }
+
+  .alert-warning {
+    @apply border-yellow-500/30 bg-yellow-500/10 text-yellow-700;
+  }
+
+  .alert-error {
+    @apply border-destructive/30 bg-destructive/10 text-destructive;
+  }
+
+  .alert-info {
+    @apply border-blue-500/30 bg-blue-500/10 text-blue-700;
+  }
+
+  /* Hide default Keycloak icons if they don't load properly */
+  .kcFeedbackSuccessIcon,
+  .kcFeedbackWarningIcon,
+  .kcFeedbackErrorIcon,
+  .kcFeedbackInfoIcon {
+    @apply hidden;
+  }
+
+  /* Sign up link section */
+  .kcSignUpClass {
+    @apply text-sm text-muted-foreground;
+  }
+
+  .kcSignUpClass a {
+    @apply text-primary underline-offset-4 hover:underline;
+  }
+
+  /* Button styling for Keycloak default buttons */
+  .kcButtonClass {
+    @apply inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium;
+    @apply ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2;
+    @apply focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50;
+  }
+
+  .kcButtonPrimaryClass,
+  .kcButtonDefaultClass {
+    @apply bg-primary text-primary-foreground hover:bg-primary/90 h-10 px-4 py-2;
+  }
+
+  .kcButtonBlockClass {
+    @apply w-full;
+  }
+
+  .kcButtonLargeClass {
+    @apply h-11 px-8;
+  }
+}
+
 
