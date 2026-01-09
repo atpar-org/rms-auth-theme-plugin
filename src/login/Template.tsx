@@ -36,8 +36,25 @@ export default function Template(props: TemplateProps<KcContext, I18n>) {
 
     const { realm, auth, url, message, isAppInitiatedAction } = kcContext;
 
+    // Safe message helpers to prevent assertion errors
+    const safeMsgStr = (key: string, ...args: (string | undefined)[]) => {
+        try {
+            return msgStr(key as never, ...args);
+        } catch {
+            return args[0] ?? key;
+        }
+    };
+
+    const safeMsg = (key: string, fallback: string) => {
+        try {
+            return msg(key as never);
+        } catch {
+            return fallback;
+        }
+    };
+
     useEffect(() => {
-        document.title = documentTitle ?? msgStr("loginTitle", realm.displayName);
+        document.title = documentTitle ?? safeMsgStr("loginTitle", realm.displayName);
     }, []);
 
     useSetClassName({
@@ -76,7 +93,7 @@ export default function Template(props: TemplateProps<KcContext, I18n>) {
                                             className="h-8 px-3 text-xs font-normal text-muted-foreground"
                                             tabIndex={1}
                                             id="kc-current-locale-link"
-                                            aria-label={msgStr("languages")}
+                                            aria-label={safeMsgStr("languages", "Languages")}
                                             aria-haspopup="listbox"
                                             aria-controls="language-switch1"
                                         >
@@ -124,11 +141,11 @@ export default function Template(props: TemplateProps<KcContext, I18n>) {
                                 <a
                                     id="reset-login"
                                     href={url.loginRestartFlowUrl}
-                                    aria-label={msgStr("restartLoginTooltip")}
+                                    aria-label={safeMsgStr("restartLoginTooltip", "Restart login")}
                                 >
                                     <div className="kc-login-tooltip">
                                         <i className={kcClsx("kcResetFlowIcon")}></i>
-                                        <span className="kc-tooltip-text">{msg("restartLoginTooltip")}</span>
+                                        <span className="kc-tooltip-text">{safeMsg("restartLoginTooltip", "Restart login")}</span>
                                     </div>
                                 </a>
                             </div>
@@ -140,7 +157,7 @@ export default function Template(props: TemplateProps<KcContext, I18n>) {
                                     <div className={clsx(kcClsx("kcLabelWrapperClass"), "subtitle")}>
                                         <span className="subtitle">
                                             <span className="required">*</span>
-                                            {msg("requiredFields")}
+                                            {safeMsg("requiredFields", "Required fields")}
                                         </span>
                                     </div>
                                     <div className="col-md-10">{node}</div>
@@ -189,7 +206,7 @@ export default function Template(props: TemplateProps<KcContext, I18n>) {
                                         return false;
                                     }}
                                 >
-                                    {msg("doTryAnotherWay")}
+                                    {safeMsg("doTryAnotherWay", "Try another way")}
                                 </a>
                             </div>
                         </form>

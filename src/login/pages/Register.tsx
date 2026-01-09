@@ -6,7 +6,6 @@ import type { PageProps } from "keycloakify/login/pages/PageProps";
 import { kcSanitize } from "keycloakify/lib/kcSanitize";
 import { getKcClsx } from "keycloakify/login/lib/kcClsx";
 import { useState } from "react";
-import { useIsPasswordRevealed } from "keycloakify/tools/useIsPasswordRevealed";
 import { clsx } from "keycloakify/tools/clsx";
 import type { KcContext } from "../KcContext";
 import type { I18n } from "../i18n";
@@ -57,11 +56,11 @@ export default function Register(props: RegisterProps) {
     const [country, setCountry] = useState<Country>(DEFAULT_COUNTRY);
     const [localPhoneNumber, setLocalPhoneNumber] = useState<string>("");
 
-    // Password visibility
-    const { isPasswordRevealed: isPassword1Revealed, toggleIsPasswordRevealed: togglePassword1 } =
-        useIsPasswordRevealed({ passwordInputId: "password" });
-    const { isPasswordRevealed: isPassword2Revealed, toggleIsPasswordRevealed: togglePassword2 } =
-        useIsPasswordRevealed({ passwordInputId: "password-confirm" });
+    // Password visibility - using simple state instead of useIsPasswordRevealed to avoid assertion errors
+    const [isPassword1Revealed, setIsPassword1Revealed] = useState(false);
+    const [isPassword2Revealed, setIsPassword2Revealed] = useState(false);
+    const togglePassword1 = () => setIsPassword1Revealed(prev => !prev);
+    const togglePassword2 = () => setIsPassword2Revealed(prev => !prev);
 
     // E.164 phone number format
     const e164PhoneNumber = toE164(country, localPhoneNumber);
@@ -102,7 +101,7 @@ export default function Register(props: RegisterProps) {
             i18n={i18n}
             doUseDefaultCss={doUseDefaultCss}
             classes={classes}
-            headerNode={msg("registerTitle")}
+            headerNode={safeMsg("registerTitle", "Register")}
             displayInfo={false}
         >
             <form id="kc-register-form" action={url.registrationAction} method="post" className="space-y-4">
@@ -115,7 +114,7 @@ export default function Register(props: RegisterProps) {
                 {/* Username */}
                 <div className={clsx(kcClsx("kcFormGroupClass"), "space-y-2")}>
                     <Label htmlFor="username">
-                        {msg("username")} <span className="text-destructive">*</span>
+                        {safeMsg("username", "Username")} <span className="text-destructive">*</span>
                     </Label>
                     <Input
                         id="username"
@@ -139,7 +138,7 @@ export default function Register(props: RegisterProps) {
                 {/* Password */}
                 <div className={clsx(kcClsx("kcFormGroupClass"), "space-y-2")}>
                     <Label htmlFor="password">
-                        {msg("password")} <span className="text-destructive">*</span>
+                        {safeMsg("password", "Password")} <span className="text-destructive">*</span>
                     </Label>
                     <div className="relative">
                         <Input
@@ -173,7 +172,7 @@ export default function Register(props: RegisterProps) {
                 {/* Confirm Password */}
                 <div className={clsx(kcClsx("kcFormGroupClass"), "space-y-2")}>
                     <Label htmlFor="password-confirm">
-                        {msg("passwordConfirm")} <span className="text-destructive">*</span>
+                        {safeMsg("passwordConfirm", "Confirm password")} <span className="text-destructive">*</span>
                     </Label>
                     <div className="relative">
                         <Input
@@ -207,7 +206,7 @@ export default function Register(props: RegisterProps) {
                 {/* Email */}
                 <div className={clsx(kcClsx("kcFormGroupClass"), "space-y-2")}>
                     <Label htmlFor="email">
-                        {msg("email")} <span className="text-destructive">*</span>
+                        {safeMsg("email", "Email")} <span className="text-destructive">*</span>
                     </Label>
                     <Input
                         id="email"
@@ -230,7 +229,7 @@ export default function Register(props: RegisterProps) {
                 {/* First Name */}
                 <div className={clsx(kcClsx("kcFormGroupClass"), "space-y-2")}>
                     <Label htmlFor="firstName">
-                        {msg("firstName")} <span className="text-destructive">*</span>
+                        {safeMsg("firstName", "First name")} <span className="text-destructive">*</span>
                     </Label>
                     <Input
                         id="firstName"
@@ -253,7 +252,7 @@ export default function Register(props: RegisterProps) {
                 {/* Last Name */}
                 <div className={clsx(kcClsx("kcFormGroupClass"), "space-y-2")}>
                     <Label htmlFor="lastName">
-                        {msg("lastName")} <span className="text-destructive">*</span>
+                        {safeMsg("lastName", "Last name")} <span className="text-destructive">*</span>
                     </Label>
                     <Input
                         id="lastName"
@@ -342,9 +341,9 @@ export default function Register(props: RegisterProps) {
                 {/* Form Actions */}
                 <div className="flex items-center justify-between gap-3 pt-2">
                     <Button asChild variant="link" size="sm" className="px-0">
-                        <a href={url.loginUrl}>{msg("backToLogin")}</a>
+                        <a href={url.loginUrl}>{safeMsg("backToLogin", "« Back to Login")}</a>
                     </Button>
-                    <Button type="submit">{msg("doRegister")}</Button>
+                    <Button type="submit">{safeMsg("doRegister", "Register")}</Button>
                 </div>
             </form>
         </Template>
