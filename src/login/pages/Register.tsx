@@ -91,7 +91,7 @@ export default function Register(props: RegisterProps) {
                 onDone: () => setSendButtonText(sendVerificationCodeLabel)
             });
         } catch (e) {
-            const raw = e instanceof Error ? e.message : msgStr("errorTitle");
+            const raw = e instanceof Error ? e.message : safeMsgStr("errorTitle", "Error");
             setErrorMessage(formatKcMessage(i18n, raw));
         }
     }
@@ -153,7 +153,7 @@ export default function Register(props: RegisterProps) {
                         <button
                             type="button"
                             className="absolute right-0 top-0 h-full px-3 py-1 text-muted-foreground hover:text-foreground"
-                            aria-label={msgStr(isPassword1Revealed ? "hidePassword" : "showPassword")}
+                            aria-label={safeMsgStr(isPassword1Revealed ? "hidePassword" : "showPassword", isPassword1Revealed ? "Hide password" : "Show password")}
                             onClick={togglePassword1}
                         >
                             {isPassword1Revealed ? <EyeOffIcon /> : <EyeIcon />}
@@ -187,7 +187,7 @@ export default function Register(props: RegisterProps) {
                         <button
                             type="button"
                             className="absolute right-0 top-0 h-full px-3 py-1 text-muted-foreground hover:text-foreground"
-                            aria-label={msgStr(isPassword2Revealed ? "hidePassword" : "showPassword")}
+                            aria-label={safeMsgStr(isPassword2Revealed ? "hidePassword" : "showPassword", isPassword2Revealed ? "Hide password" : "Show password")}
                             onClick={togglePassword2}
                         >
                             {isPassword2Revealed ? <EyeOffIcon /> : <EyeIcon />}
