@@ -92,7 +92,7 @@ export default function Template(props: TemplateProps<KcContext, I18n>) {
                                             id="language-switch1"
                                             className="max-h-60 overflow-auto py-1 text-sm"
                                         >
-                                            {enabledLanguages.map(({ languageTag, label, href }, i) => (
+                                            {enabledLanguages.map(({ languageTag, label, href }: { languageTag: string; label: string; href: string }, i: number) => (
                                                 <li key={languageTag} role="none">
                                                     <a
                                                         role="option"

@@ -5,13 +5,13 @@ import type { ThemeName } from "../kc.gen";
 /**
  * @see: https://docs.keycloakify.dev/features/i18n
  *
- * Extra messages are required for custom message keys from the keycloak-phone-provider.
+ * Custom translations are required for message keys from the keycloak-phone-provider.
  * Without these, Keycloakify throws "Wrong assertion encountered" errors when
  * trying to look up unknown message keys.
  */
 const { useI18n, ofTypeI18n } = i18nBuilder
     .withThemeName<ThemeName>()
-    .withExtraMessages({
+    .withCustomTranslations({
         en: {
             // Phone provider messages
             phoneNumber: "Phone number",
